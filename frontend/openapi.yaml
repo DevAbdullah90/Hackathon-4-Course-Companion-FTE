@@ -1,0 +1,27 @@
+openapi: 3.0.1
+info:
+  title: Course Companion API
+  version: 1.0.0
+servers:
+  - url: https://<deployed-url>
+paths:
+  /api/v1/courses/{id}/structure:
+    get:
+      operationId: getCourseStructure
+      summary: Get list of modules and chapters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/v1/chapters/{id}/content:
+    get:
+      operationId: getChapterContent
+      summary: Get full text of a chapter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string

@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Course Companion",
+  "name_for_model": "course_companion",
+  "description_for_human": "AI Agent Dev Course Tutor. Strict grounding.",
+  "description_for_model": "Access course content, structure, and quizzes. Use this tool to answer user questions about AI Agent Development by retrieving specific chapters.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://<deployed-url>/openapi.json"
+  },
+  "logo_url": "https://<deployed-url>/logo.png",
+  "contact_email": "support@example.com",
+  "legal_info_url": "https://example.com/legal"
+}

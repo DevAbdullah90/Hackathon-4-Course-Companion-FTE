@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Phase 3 Web LMS API
+  version: 1.0.0
+paths:
+  /api/v1/auth/login:
+    post:
+      summary: User Login
+      responses:
+        200:
+          description: JWT Token
+  /api/v1/courses:
+    get:
+      summary: List all courses
+  /api/v1/courses/{slug}/dashboard:
+    get:
+      summary: Get user-specific course progress overview
+  /api/v1/chapters/{slug}:
+    get:
+      summary: Fetch lesson content
+  /api/v1/progress:
+    post:
+      summary: Update user progress
+  /api/v1/premium/grade:
+    post:
+      summary: LLM-based assessment grading (Premium Only)
+  /api/v1/admin/analytics:
+    get:
+      summary: System-wide usage reports (Admin Only)

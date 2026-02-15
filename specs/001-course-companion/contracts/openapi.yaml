@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: Course Companion API
+  version: 1.0.0
+  description: Deterministic backend for Course Companion FTE (Zero-Backend-LLM).
+paths:
+  /courses:
+    get:
+      summary: List all courses
+      operationId: listCourses
+      responses:
+        '200':
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+
+  /courses/{course_id}/structure:
+    get:
+      summary: Get full course structure (modules/chapters)
+      operationId: getCourseStructure
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Hierarchical structure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseStructure'
+
+  /chapters/{chapter_id}/content:
+    get:
+      summary: Get chapter content (from R2)
+      operationId: getChapterContent
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Chapter content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChapterContent'
+        '403':
+          description: Premium required
+
+  /chapters/{chapter_id}/progress:
+    post:
+      summary: Mark chapter as complete
+      operationId: markChapterComplete
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Progress updated
+
+  /quizzes/{chapter_id}/grade:
+    post:
+      summary: Submit quiz for grading
+      operationId: gradeQuiz
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSubmission'
+      responses:
+        '200':
+          description: Graded result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResult'
+
+  /search:
+    get:
+      summary: Search course content
+      operationId: searchContent
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+    CourseStructure:
+      type: object
+      properties:
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
+    Module:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        chapters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChapterSummary'
+    ChapterSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        is_premium:
+          type: boolean
+    ChapterContent:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        markdown_content:
+          type: string
+    QuizSubmission:
+      type: object
+      properties:
+        answers:
+          type: object
+          additionalProperties:
+            type: string
+    QuizResult:
+      type: object
+      properties:
+        score:
+          type: integer
+        passed:
+          type: boolean
+        correct_answers:
+          type: object
+          additionalProperties:
+            type: string
+    SearchResult:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+        snippet:
+          type: string
