@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../lib/api';
 import { BookOpen, CheckCircle, TrendingUp } from 'lucide-react';
+import AdaptivePath from '../components/AdaptivePath';
 
 interface CourseDashboard {
   course: {
@@ -60,43 +61,50 @@ const Dashboard: React.FC = () => {
         </button>
       </header>
 
+      <div className="mb-12">
+        <AdaptivePath />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {dashboards.map((dash) => (
-          <div key={dash.course.slug} className="group relative bg-card border rounded-xl p-6 hover:shadow-lg transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <BookOpen className="w-6 h-6 text-primary" />
+        {dashboards.map((dash) => {
+          if (!dash || !dash.course) return null;
+          return (
+            <div key={dash.course.slug} className="group relative bg-card border rounded-xl p-6 hover:shadow-lg transition-all">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <BookOpen className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium px-2 py-1 bg-secondary rounded-full">
+                  {Math.round(dash.percentage)}% Complete
+                </span>
               </div>
-              <span className="text-sm font-medium px-2 py-1 bg-secondary rounded-full">
-                {Math.round(dash.percentage)}% Complete
-              </span>
-            </div>
 
-            <h3 className="text-xl font-semibold mb-2">{dash.course.title}</h3>
-            <p className="text-muted-foreground text-sm mb-6 line-clamp-2">{dash.course.description}</p>
+              <h3 className="text-xl font-semibold mb-2">{dash.course.title}</h3>
+              <p className="text-muted-foreground text-sm mb-6 line-clamp-2">{dash.course.description}</p>
 
-            <div className="w-full bg-secondary h-2 rounded-full overflow-hidden mb-6">
-              <div
-                className="bg-primary h-full transition-all duration-500"
-                style={{ width: `${dash.percentage}%` }}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-sm text-muted-foreground">
-                <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
-                {dash.completed_chapters} / {dash.total_chapters} Lessons
+              <div className="w-full bg-secondary h-2 rounded-full overflow-hidden mb-6">
+                <div
+                  className="bg-primary h-full transition-all duration-500"
+                  style={{ width: `${dash.percentage}%` }}
+                />
               </div>
-              <a
-                href={dash.next_chapter_slug ? `/lesson/${dash.next_chapter_slug}` : '#missing-slug'}
-                onClick={() => { if (!dash.next_chapter_slug) alert('Next chapter not found!'); }}
-                className="text-sm font-bold text-primary hover:underline"
-              >
-                Continue →
-              </a>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CheckCircle className="w-4 h-4 mr-1 text-green-500" />
+                  {dash.completed_chapters} / {dash.total_chapters} Lessons
+                </div>
+                <a
+                  href={dash.next_chapter_slug ? `/lesson/${dash.next_chapter_slug}` : '#missing-slug'}
+                  onClick={() => { if (!dash.next_chapter_slug) alert('Next chapter not found!'); }}
+                  className="text-sm font-bold text-primary hover:underline"
+                >
+                  Continue →
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

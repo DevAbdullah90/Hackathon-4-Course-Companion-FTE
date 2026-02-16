@@ -23,7 +23,7 @@ class AssessmentResponse(BaseModel):
     reasoning: str
     usage_id: str
 
-@router.post("/assessments/grade", response_model=AssessmentResponse)
+@router.post("/grade", response_model=AssessmentResponse)
 async def grade_assessment(
     request: AssessmentRequest,
     background_tasks: BackgroundTasks,

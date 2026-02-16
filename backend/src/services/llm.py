@@ -1,5 +1,6 @@
 import os
 import yaml
+import openai
 from ..core.config import settings
 
 class LLMService:

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, User } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import api from '../lib/api';
 
 interface AITutorProps {
@@ -90,10 +91,29 @@ const AITutor: React.FC<AITutorProps> = ({ context }) => {
                                     {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-primary" />}
                                 </div>
                                 <div className={`p-3 rounded-2xl text-sm max-w-[80%] ${m.role === 'user'
-                                        ? 'bg-primary text-primary-foreground rounded-br-none'
-                                        : 'bg-muted rounded-bl-none'
+                                    ? 'bg-primary text-primary-foreground rounded-br-none'
+                                    : 'bg-muted rounded-bl-none'
                                     }`}>
-                                    {m.content}
+                                    <ReactMarkdown
+                                        className="prose prose-sm dark:prose-invert max-w-none"
+                                        components={{
+                                            code({ node, inline, className, children, ...props }: any) {
+                                                return !inline ? (
+                                                    <div className="bg-black/50 p-2 rounded-md my-2 overflow-x-auto">
+                                                        <code className={className} {...props}>
+                                                            {children}
+                                                        </code>
+                                                    </div>
+                                                ) : (
+                                                    <code className="bg-black/20 px-1 rounded" {...props}>
+                                                        {children}
+                                                    </code>
+                                                )
+                                            }
+                                        }}
+                                    >
+                                        {m.content}
+                                    </ReactMarkdown>
                                 </div>
                             </div>
                         ))}

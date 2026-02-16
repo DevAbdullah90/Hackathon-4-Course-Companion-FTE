@@ -14,15 +14,22 @@ def get_chapter_content(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
+    print(f"DEBUG: Fetching chapter slug={slug}")
     chapter = session.exec(select(Chapter).where(Chapter.slug == slug)).first()
     if not chapter:
+        print(f"DEBUG: Chapter not found for slug={slug}")
         raise HTTPException(status_code=404, detail="Chapter not found")
     
+    print(f"DEBUG: Found chapter {chapter.id} {chapter.title} premium={chapter.is_premium}")
+
     if chapter.is_premium and not current_user.is_premium:
+        print(f"DEBUG: User {current_user.id} is not premium")
         raise HTTPException(status_code=403, detail="Premium content")
     
+    print(f"DEBUG: Fetching content key={chapter.r2_key}")
     content = content_service.get_content(chapter.r2_key, db_content=chapter.content)
     if content is None:
+         print(f"DEBUG: Content unavailable for key={chapter.r2_key}")
          raise HTTPException(status_code=500, detail="Content unavailable")
 
     # Find next chapter

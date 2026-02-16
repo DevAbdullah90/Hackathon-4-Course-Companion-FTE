@@ -1,6 +1,10 @@
 import boto3
 import os
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+load_dotenv()
+
 
 class Settings(BaseSettings):
     # Default to SQLite for local dev if Postgres not set
@@ -32,6 +36,7 @@ class Settings(BaseSettings):
         extra = "ignore" # Ignore extra env vars
 
 settings = Settings()
+
 
 def get_r2_client():
     if settings.STORAGE_TYPE == "local":

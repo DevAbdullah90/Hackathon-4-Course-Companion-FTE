@@ -20,6 +20,7 @@ const PremiumFeatures: React.FC<PremiumFeaturesProps> = ({ chapterId, questionId
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [error, setError] = useState('');
+  const [answer, setAnswer] = useState('');
 
   const getAIFeedback = async (answer: string) => {
     setLoading(true);
@@ -55,6 +56,23 @@ const PremiumFeatures: React.FC<PremiumFeaturesProps> = ({ chapterId, questionId
             <Sparkles className="w-5 h-5 text-purple-600" />
           </div>
           <h2 className="text-xl font-bold italic">AI Tutor Insights</h2>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-2">Your Answer:</label>
+          <textarea
+            className="w-full p-3 border rounded-xl bg-background min-h-[150px] focus:ring-2 focus:ring-purple-500 outline-none"
+            placeholder="Type your detailed answer here..."
+            value={answer} // We need to add this state
+            onChange={(e) => setAnswer(e.target.value)} // And this setter
+          />
+          <button
+            onClick={() => getAIFeedback(answer)}
+            disabled={loading || !answer.trim()}
+            className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 transition-colors disabled:opacity-50"
+          >
+            {loading ? 'Analyzing...' : 'Get AI Feedback'}
+          </button>
         </div>
 
         {loading ? (

@@ -9,7 +9,12 @@ class ContentService:
             self.client = get_r2_client()
             self.bucket = settings.R2_BUCKET_NAME
         else:
-            self.local_path = settings.LOCAL_STORAGE_PATH
+            # Robustly find the local_content directory relative to this file
+            # backend/src/services/content.py -> backend/local_content
+            from pathlib import Path
+            base_dir = Path(__file__).resolve().parent.parent.parent
+            self.local_path = base_dir / "local_content"
+            
             # Ensure local directory exists
             os.makedirs(self.local_path, exist_ok=True)
 
@@ -30,7 +35,18 @@ class ContentService:
             return self._get_r2_content(key)
 
     def _get_local_content(self, key: str) -> str:
+        # key might be like "mod1/assessment.md"
+        # self.local_path might be "./local_content"
+        # os.path.join("./local_content", "mod1/assessment.md") -> "./local_content/mod1/assessment.md"
+        # However, if key has leading slash or is absolute, join might fail or behave unexpectedly.
+        # Let's ensure key is relative.
+        if key.startswith("/"):
+            key = key[1:]
+        
         file_path = os.path.join(self.local_path, key)
+        file_path = os.path.abspath(file_path) # Normalize path
+        
+        print(f"DEBUG: Reading local content from {file_path}")
         if not os.path.exists(file_path):
             print(f"Local file not found: {file_path}")
             return None
